@@ -7,14 +7,14 @@ import {
 } from "./transforms.ts"
 
 describe("transforms", () => {
-  it("transformBody preserves system text and prefixes tool names", () => {
+  it("transformBody preserves system text and prefixes tool names", async () => {
     const input = JSON.stringify({
       system: [{ type: "text", text: "OpenCode and opencode" }],
       tools: [{ name: "search" }],
       messages: [{ content: [{ type: "tool_use", name: "lookup" }] }],
     })
 
-    const output = transformBody(input)
+    const output = await transformBody(input)
     assert.equal(typeof output, "string")
     const parsed = JSON.parse(output as string) as {
       system: Array<{ text: string }>
@@ -27,7 +27,7 @@ describe("transforms", () => {
     assert.equal(parsed.messages[0].content[0].name, "mcp_lookup")
   })
 
-  it("transformBody keeps opencode-claude-auth system text unchanged", () => {
+  it("transformBody keeps opencode-claude-auth system text unchanged", async () => {
     const input = JSON.stringify({
       system: [
         {
@@ -37,7 +37,7 @@ describe("transforms", () => {
       ],
     })
 
-    const output = transformBody(input)
+    const output = await transformBody(input)
     assert.equal(typeof output, "string")
     const parsed = JSON.parse(output as string) as {
       system: Array<{ text: string }>
@@ -49,7 +49,7 @@ describe("transforms", () => {
     )
   })
 
-  it("transformBody keeps OpenCode and opencode URL/path text unchanged", () => {
+  it("transformBody keeps OpenCode and opencode URL/path text unchanged", async () => {
     const input = JSON.stringify({
       system: [
         {
@@ -59,7 +59,7 @@ describe("transforms", () => {
       ],
     })
 
-    const output = transformBody(input)
+    const output = await transformBody(input)
     assert.equal(typeof output, "string")
     const parsed = JSON.parse(output as string) as {
       system: Array<{ text: string }>

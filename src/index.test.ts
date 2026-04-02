@@ -125,6 +125,7 @@ const SOURCE_FILES = [
   "model-config.ts",
   "plugin-config.ts",
   "transforms.ts",
+  "cch.ts",
   "credentials.ts",
   "logger.ts",
 ] as const
@@ -150,6 +151,7 @@ async function loadHelpersWithCountingKeychain(
 }> {
   const tempDir = await mkdtemp(join(tmpdir(), "opencode-claude-auth-cache-"))
   const tempKeychain = join(tempDir, "keychain.ts")
+  const tempCch = join(tempDir, "cch.ts")
 
   await copySourceFiles(tempDir)
   await writeFile(
@@ -180,6 +182,15 @@ export function buildAccountLabels(creds) {
 export function __getReadCount() {
   return readCount
 }
+`,
+    "utf8",
+  )
+
+  await writeFile(
+    tempCch,
+    `export async function computeCch() { return "abc12" }
+export function replaceCchPlaceholder(body, cch) { return body.replace("cch=00000", \`cch=\${cch}\`) }
+export function hasCchPlaceholder(body) { return body.includes("cch=00000") }
 `,
     "utf8",
   )
@@ -245,6 +256,7 @@ describe("exported helpers", () => {
   before(async () => {
     const tempDir = await mkdtemp(join(tmpdir(), "opencode-claude-auth-"))
     const tempKeychain = join(tempDir, "keychain.ts")
+    const tempCch = join(tempDir, "cch.ts")
 
     await copySourceFiles(tempDir)
     await writeFile(
@@ -253,6 +265,15 @@ describe("exported helpers", () => {
 export function refreshAccount() { return null }
 export function writeBackCredentials() { return true }
 export function buildAccountLabels(creds) { return creds.map((_, i) => \`Account \${i + 1}\`) }
+`,
+      "utf8",
+    )
+
+    await writeFile(
+      tempCch,
+      `export async function computeCch() { return "abc12" }
+export function replaceCchPlaceholder(body, cch) { return body.replace("cch=00000", \`cch=\${cch}\`) }
+export function hasCchPlaceholder(body) { return body.includes("cch=00000") }
 `,
       "utf8",
     )

@@ -291,7 +291,7 @@ const plugin: Plugin = async () => {
               modelId,
               excluded,
             )
-            const body = transformBody(requestInit.body)
+            const body = await transformBody(requestInit.body)
 
             const headerKeys: string[] = []
             headers.forEach((_, key) => headerKeys.push(key))
