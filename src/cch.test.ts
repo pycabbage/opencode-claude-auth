@@ -1,10 +1,6 @@
 import { describe, it } from "node:test"
 import assert from "node:assert/strict"
-import {
-  computeCch,
-  replaceCchPlaceholder,
-  hasCchPlaceholder,
-} from "./cch.ts"
+import { computeCch, replaceCchPlaceholder, hasCchPlaceholder } from "./cch.ts"
 
 describe("computeCch", () => {
   it("produces correct hash for empty string", async () => {
@@ -20,12 +16,14 @@ describe("computeCch", () => {
   })
 
   it("produces correct hash for billing header with sonnet model", async () => {
-    const body = "cc_version=2.1.88.claude-sonnet-4-5; cc_entrypoint=cli; cch=00000;"
+    const body =
+      "cc_version=2.1.88.claude-sonnet-4-5; cc_entrypoint=cli; cch=00000;"
     assert.equal(await computeCch(body), "a28c8")
   })
 
   it("produces correct hash for billing header with opus model", async () => {
-    const body = "cc_version=2.1.88.claude-opus-4-1; cc_entrypoint=cli; cch=00000;"
+    const body =
+      "cc_version=2.1.88.claude-opus-4-1; cc_entrypoint=cli; cch=00000;"
     assert.equal(await computeCch(body), "d0c67")
   })
 
@@ -94,12 +92,18 @@ describe("hasCchPlaceholder", () => {
 describe("replaceCchPlaceholder", () => {
   it("replaces the placeholder with a cch value", () => {
     const body = '{"request":"data","cch=00000"}'
-    assert.equal(replaceCchPlaceholder(body, "abc12"), '{"request":"data","cch=abc12"}')
+    assert.equal(
+      replaceCchPlaceholder(body, "abc12"),
+      '{"request":"data","cch=abc12"}',
+    )
   })
 
   it("replaces only the first occurrence", () => {
     const body = "a cch=00000 b cch=00000 c"
-    assert.equal(replaceCchPlaceholder(body, "abc12"), "a cch=abc12 b cch=00000 c")
+    assert.equal(
+      replaceCchPlaceholder(body, "abc12"),
+      "a cch=abc12 b cch=00000 c",
+    )
   })
 
   it("returns original body when no placeholder exists", () => {

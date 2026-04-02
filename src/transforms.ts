@@ -1,8 +1,4 @@
-import {
-  computeCch,
-  hasCchPlaceholder,
-  replaceCchPlaceholder,
-} from "./cch.ts"
+import { computeCch, hasCchPlaceholder, replaceCchPlaceholder } from "./cch.ts"
 
 const TOOL_PREFIX = "mcp_"
 
