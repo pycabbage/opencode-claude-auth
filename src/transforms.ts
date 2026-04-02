@@ -1,12 +1,19 @@
+import {
+  computeCch,
+  hasCchPlaceholder,
+  replaceCchPlaceholder,
+} from "./cch.ts"
+
 const TOOL_PREFIX = "mcp_"
 
-export function transformBody(
+export async function transformBody(
   body: BodyInit | null | undefined,
-): BodyInit | null | undefined {
+): Promise<BodyInit | null | undefined> {
   if (typeof body !== "string") {
     return body
   }
 
+  let result: string
   try {
     const parsed = JSON.parse(body) as {
       model?: string
@@ -44,10 +51,16 @@ export function transformBody(
       })
     }
 
-    return JSON.stringify(parsed)
+    result = JSON.stringify(parsed)
   } catch {
-    return body
+    result = body
   }
+
+  if (hasCchPlaceholder(result)) {
+    const cch = await computeCch(result)
+    return replaceCchPlaceholder(result, cch)
+  }
+  return result
 }
 
 export function stripToolPrefix(text: string): string {
